@@ -1,11 +1,19 @@
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
+from rest_framework import serializers
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
-
 from weddingapi.models import Host, Vendor
+
+
+class UserSerializer(serializers.ModelSerializer):
+    """JSON serializer for user types
+    """
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'first_name', 'last_name']
 
 
 @api_view(['POST'])
@@ -49,21 +57,21 @@ def register_vendor(request):
     new_user = User.objects.create_user(
         username=request.data['username'],
         password=request.data['password'],
-        first_name=request.data['firstName'],
-        last_name=request.data['lastName'],
+        first_name=request.data['first_name'],
+        last_name=request.data['last_name'],
         is_staff=True
     )
 
     vendor = Vendor.objects.create(
         user=new_user,
-        vendor_type_id=request.data['vendorTypeId'],
-        business_name=request.data['businessName'],
+        vendor_type_id=request.data['vendor_type_id'],
+        business_name=request.data['business_name'],
         city=request.data['city'],
         state=request.data['state'],
-        zip_code=request.data['zipCode'],
+        zip_code=request.data['zip_code'],
         description=request.data["description"],
-        profile_image=request.data["profileImage"],
-        years_in_business=request.data["yearsInBusiness"]
+        profile_image=request.data["profile_image"],
+        years_in_business=request.data["years_in_business"]
     )
 
     token = Token.objects.create(user=vendor.user)
@@ -84,21 +92,21 @@ def register_host(request):
     new_user = User.objects.create_user(
         username=request.data['username'],
         password=request.data['password'],
-        first_name=request.data['firstName'],
-        last_name=request.data['lastName'],
+        first_name=request.data['first_name'],
+        last_name=request.data['last_name'],
         is_staff=False
     )
 
     host = Host.objects.create(
         user=new_user,
-        wedding_size_id=request.data['weddingSizeId'],
-        profile_image=request.data["profileImage"],
+        wedding_size_id=request.data['wedding_size_id'],
+        profile_image=request.data["profile_image"],
         date=request.data["date"],
         time=request.data["time"],
-        street_address=request.data['streetAddress'],
+        street_address=request.data['street_address'],
         city=request.data['city'],
         state=request.data['state'],
-        zip_code=request.data['zipCode']
+        zip_code=request.data['zip_code']
     )
 
     token = Token.objects.create(user=host.user)

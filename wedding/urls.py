@@ -17,12 +17,11 @@ from django.conf.urls import include
 from django.contrib import admin
 from django.urls import path
 from rest_framework import routers
-from weddingapi.views import register_host, register_vendor, login_user
+from weddingapi.views import register_host, register_vendor, login_user, HostView, VendorView
 
 router = routers.DefaultRouter(trailing_slash=False)
-# router.register(r'gametypes', GameTypeView, 'gametype')
-# router.register(r'games', GameView, 'game')
-# router.register(r'events', EventView, 'event')
+router.register(r'hosts', HostView, 'host')
+router.register(r'vendors', VendorView, 'vendor')
 
 
 urlpatterns = [
@@ -34,4 +33,3 @@ urlpatterns = [
     path('', include(router.urls)),
     # path('', include('levelupreports.urls')),
 ]
-
