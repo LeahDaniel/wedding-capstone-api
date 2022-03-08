@@ -1,0 +1,17 @@
+[
+    {
+        "model": "weddingapi.vendor",
+        "pk": 1,
+        "fields": {
+            "user": 2,
+            "vendor_type": 3,
+            "business_name": "The Place",
+            "city": "Nashville",
+            "state": "TN",
+            "zip_code": "37027",
+            "description": "bladhfklaldskgjlakfbglskfdghadtes",
+            "profile_image": null,
+            "years_in_business": 8
+        }
+    }
+]

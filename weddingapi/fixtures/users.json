@@ -1,0 +1,24 @@
+[
+    {
+        "model": "auth.user",
+        "pk": 1,
+        "fields": {
+            "username": "host",
+            "password": "password",
+            "first_name": "Leah",
+            "last_name": "Daniel",
+            "is_staff": false
+        }
+    },
+    {
+        "model": "auth.user",
+        "pk": 2,
+        "fields": {
+            "username": "vendor",
+            "password": "password",
+            "first_name": "Sherlock",
+            "last_name": "Holmes",
+            "is_staff": true
+        }
+    }
+]

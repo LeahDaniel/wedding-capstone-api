@@ -4,7 +4,7 @@ from django.db import models
 
 class Vendor(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    vendor_type = models.ForeignKey("VendorType", on_delete=models.DO_NOTHING)
+    vendor_type = models.ForeignKey("VendorType", on_delete=models.SET_NULL, null=True)
     business_name = models.CharField(max_length=85)
     profile_image = models.ImageField(
         upload_to='vendorprofile', height_field=None,

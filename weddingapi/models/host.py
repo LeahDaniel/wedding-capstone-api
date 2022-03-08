@@ -5,7 +5,7 @@ from django.db import models
 class Host(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     wedding_size = models.ForeignKey(
-        "WeddingSize", on_delete=models.DO_NOTHING)
+        "WeddingSize", on_delete=models.SET_NULL, null=True)
     profile_image = models.ImageField(
         upload_to='hostprofile', height_field=None,
         width_field=None, max_length=None, null=True)
