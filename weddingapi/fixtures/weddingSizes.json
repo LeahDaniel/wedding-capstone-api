@@ -1,0 +1,29 @@
+[
+    {
+        "model": "weddingapi.weddingsize",
+        "pk": 1,
+        "fields": {
+            "min_guests": 0,
+            "max_guests": 50,
+            "label": "Small"
+        }
+    },
+    {
+        "model": "weddingapi.weddingsize",
+        "pk": 2,
+        "fields": {
+            "min_guests": 51,
+            "max_guests": 150,
+            "label": "Medium"
+        }
+    },
+    {
+        "model": "weddingapi.weddingsize",
+        "pk": 3,
+        "fields": {
+            "min_guests": 151,
+            "max_guests": null,
+            "label": "Large"
+        }
+    }
+]

@@ -1,0 +1,107 @@
+[
+    {
+        "model": "weddingapi.vendortype",
+        "pk": 1,
+        "fields": {
+            "label": "Photographer"
+        }
+    },
+    {
+        "model": "weddingapi.vendortype",
+        "pk": 2,
+        "fields": {
+            "label": "Hair Stylist"
+        }
+    },
+    {
+        "model": "weddingapi.vendortype",
+        "pk": 3,
+        "fields": {
+            "label": "Makeup Artist"
+        }
+    },
+    {
+        "model": "weddingapi.vendortype",
+        "pk": 4,
+        "fields": {
+            "label": "Bakery"
+        }
+    },
+    {
+        "model": "weddingapi.vendortype",
+        "pk": 5,
+        "fields": {
+            "label": "Florist"
+        }
+    },
+    {
+        "model": "weddingapi.vendortype",
+        "pk": 6,
+        "fields": {
+            "label": "Musician"
+        }
+    },
+    {
+        "model": "weddingapi.vendortype",
+        "pk": 7,
+        "fields": {
+            "label": "DJ"
+        }
+    },
+    {
+        "model": "weddingapi.vendortype",
+        "pk": 8,
+        "fields": {
+            "label": "Videographer"
+        }
+    },
+    {
+        "model": "weddingapi.vendortype",
+        "pk": 9,
+        "fields": {
+            "label": "Stationer"
+        }
+    },
+    {
+        "model": "weddingapi.vendortype",
+        "pk": 10,
+        "fields": {
+            "label": "Caterer"
+        }
+    },
+    {
+        "model": "weddingapi.vendortype",
+        "pk": 11,
+        "fields": {
+            "label": "Officiant"
+        }
+    },
+    {
+        "model": "weddingapi.vendortype",
+        "pk": 12,
+        "fields": {
+            "label": "Rentals"
+        }
+    },
+    {
+        "model": "weddingapi.vendortype",
+        "pk": 13,
+        "fields": {
+            "label": "Transportation"
+        }
+    },
+    {
+        "model": "weddingapi.vendortype",
+        "pk": 14,
+        "fields": {
+            "label": "Lighting Designer"
+        }
+    },
+    {
+        "model": "weddingapi.vendortype",
+        "pk": 15,
+        "fields": {
+            "label": "Bartender"
+        }
+    }
+]
