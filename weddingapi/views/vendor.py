@@ -1,15 +1,52 @@
 """View module for handling requests about vendors"""
 from django.core.exceptions import ValidationError
+from django.db.models import Avg
 from rest_framework import serializers, status
+from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
-from rest_framework.decorators import action
-from weddingapi.models import Vendor
+from weddingapi.models import Host, Vendor
+
 from .auth import UserSerializer
 
 
 class VendorView(ViewSet):
     """Vendor view"""
+
+    def list(self, request):
+        """Handle GET requests to get all vendors
+
+        Returns:
+            Response -- JSON serialized list of vendors
+        """
+
+        host = Host.objects.get(user=request.auth.user)
+
+        vendors = Vendor.objects.filter(
+            city__iexact=host.city,
+            state__iexact=host.state,
+            allowed_sizes__wedding_size=host.wedding_size_id
+        )
+
+        max_price = request.query_params.get('max_price', None)
+        min_price = request.query_params.get('min_price', None)
+        rating = request.query_params.get('rating', None)
+
+        if max_price is not None:
+            vendors = vendors.annotate(
+                cost_average=Avg("contracts__cost_per_hour")
+            ).filter(cost_average__lte=max_price)
+        if min_price is not None:
+            vendors = vendors.annotate(
+                cost_average=Avg("contracts__cost_per_hour")
+            ).filter(cost_average__gte=min_price)
+        if rating is not None:
+            vendors = vendors.annotate(
+                rating_average=Avg("vendor_rating__score")
+            ).filter(rating_average__gte=rating)
+
+        serializer = VendorSerializer(vendors, many=True)
+        return Response(serializer.data)
 
     @action(methods=['get'], detail=False, url_path="profile")
     def get_current(self, request):
@@ -50,7 +87,10 @@ class VendorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Vendor
         depth = 1
-        fields = "__all__"
+        fields = ("id", "user", "vendor_type", "business_name", "city", "state",
+                  "zip_code", "description", "profile_image", "years_in_business",
+                  "contracts", "average_rating", "average_cost", "total_hired_count",
+                  "allowed_sizes")
 
 
 class UpdateVendorSerializer(serializers.ModelSerializer):

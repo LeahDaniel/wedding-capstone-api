@@ -6,9 +6,10 @@ from django.core.management.base import BaseCommand
 from faker import Faker
 from faker.providers import address, date_time
 from rest_framework.authtoken.models import Token
-from weddingapi.helpers import STATES
+# from weddingapi.helpers import STATES
 from weddingapi.models import (Host, Rating, Review, Vendor, VendorType,
                                VendorWeddingSize, WeddingSize)
+from weddingapi.models.host_vendor import HostVendor
 
 
 class Command(BaseCommand):
@@ -34,9 +35,9 @@ class Command(BaseCommand):
         else:
             self.create_users()
 
-    def create_users(self, vendor_count=8):
+    def create_users(self, vendor_count=20):
         """Create random users"""
-        for _ in range(3):
+        for _ in range(5):
             first_name = self.faker.first_name()
             last_name = self.faker.last_name()
             username = f'{first_name}_{last_name}'
@@ -55,8 +56,10 @@ class Command(BaseCommand):
                 date=self.faker.date_this_year(),
                 time=self.faker.time(),
                 street_address=self.faker.street_address(),
-                city=self.faker.city(),
-                state=random.choice(STATES),
+                city="Nashville",
+                state="TN",
+                # city=self.faker.city(),
+                # state=random.choice(STATES),
                 zip_code=self.faker.postcode()[0:5]
             )
 
@@ -82,8 +85,10 @@ class Command(BaseCommand):
                     pk=random.randint(1, VendorType.objects.count())),
                 business_name=self.faker.ecommerce_name(),
                 profile_image=None,
-                city=self.faker.city(),
-                state=random.choice(STATES),
+                city="Nashville",
+                state="TN",
+                # city=self.faker.city(),
+                # state=random.choice(STATES),
                 zip_code=self.faker.postcode()[0:5],
                 description=self.faker.paragraph(),
                 years_in_business=random.randint(1, 150)
@@ -99,6 +104,7 @@ class Command(BaseCommand):
         for host in hosts:
             self.create_ratings(host, vendors)
             self.create_reviews(host, vendors)
+            self.create_contracts(host, vendors)
 
         for vendor in vendors:
             self.create_vendor_wedding_sizes(vendor)
@@ -128,6 +134,21 @@ class Command(BaseCommand):
                     host=host,
                     body=self.faker.paragraph(),
                     time_sent=self.faker.date_time()
+                )
+                
+    def create_contracts(self, host, vendors):
+        """_summary_
+
+        """
+
+        for vendor in vendors:
+            if vendor.id % 2 == 0:
+                HostVendor.objects.create(
+                    vendor=vendor,
+                    host=host,
+                    cost_per_hour=round(random.uniform(33.33, 250.25), 2),
+                    hired= False,
+                    fired= False
                 )
 
     def create_vendor_wedding_sizes(self, vendor):
