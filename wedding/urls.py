@@ -18,7 +18,8 @@ from django.contrib import admin
 from django.urls import path
 from rest_framework import routers
 from weddingapi.views import (HostVendorView, HostView, MessageView,
-                              RatingView, ReviewView, VendorView, login_user,
+                              RatingView, ReviewView, VendorView,
+                              get_vendor_types, get_wedding_sizes, login_user,
                               register_host, register_vendor)
 
 router = routers.DefaultRouter(trailing_slash=False)
@@ -32,6 +33,9 @@ router.register(r'hostvendors', HostVendorView, 'host vendor')
 
 urlpatterns = [
     path('registerhost', register_host),
+    path('registervendor', register_vendor),
+    path('weddingsizes', get_wedding_sizes),
+    path('vendortypes', get_vendor_types),
     path('registervendor', register_vendor),
     path('login', login_user),
     path('api-auth', include('rest_framework.urls', namespace='rest_framework')),
