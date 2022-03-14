@@ -5,7 +5,7 @@ from .rating import Rating
 
 
 class Vendor(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="vendor_user")
     vendor_type = models.ForeignKey(
         "VendorType", on_delete=models.SET_NULL, null=True)
     business_name = models.CharField(max_length=85)

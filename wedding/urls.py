@@ -17,11 +17,13 @@ from django.conf.urls import include
 from django.contrib import admin
 from django.urls import path
 from rest_framework import routers
-from weddingapi.views import register_host, register_vendor, login_user, HostView, VendorView
+from weddingapi.views import (HostView, MessageView, VendorView, login_user,
+                              register_host, register_vendor)
 
 router = routers.DefaultRouter(trailing_slash=False)
 router.register(r'hosts', HostView, 'host')
 router.register(r'vendors', VendorView, 'vendor')
+router.register(r'messages', MessageView, 'message')
 
 
 urlpatterns = [

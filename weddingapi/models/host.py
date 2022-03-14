@@ -3,7 +3,7 @@ from django.db import models
 
 
 class Host(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="host_user")
     wedding_size = models.ForeignKey(
         "WeddingSize", on_delete=models.SET_NULL, null=True)
     profile_image = models.ImageField(

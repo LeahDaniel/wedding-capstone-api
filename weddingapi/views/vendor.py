@@ -6,12 +6,32 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
 from weddingapi.models import Host, Vendor
+from weddingapi.views.review import ReviewSerializer
 
 from .auth import UserSerializer
 
 
 class VendorView(ViewSet):
     """Vendor view"""
+
+    def retrieve(self, request, pk):
+        """Handle GET requests for single vendor
+
+        Returns:
+            Response -- JSON serialized vendor
+        """
+        try:
+            vendor = Vendor.objects.get(pk=pk)
+            
+            user_id = request.query_params.get('user', None)
+
+            if user_id is not None:
+                vendor = Vendor.objects.get(user_id=user_id)
+            
+            serializer = VendorSerializer(vendor)
+            return Response(serializer.data)
+        except Vendor.DoesNotExist as ex:
+            return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
 
     def list(self, request):
         """Handle GET requests to get all vendors
@@ -60,6 +80,19 @@ class VendorView(ViewSet):
                 'message': 'The logged in user is not a vendor'},
                 status=status.HTTP_404_NOT_FOUND
             )
+            
+    @action(methods=['get'], detail=False, url_path="user")
+    def get_vendor_for_user(self, request):
+        """Get a vendor back based on a given user id"""
+        try:
+            vendor = Vendor.objects.get(user=request.auth.user)
+            serializer = VendorSerializer(vendor)
+            return Response(serializer.data)
+        except Vendor.DoesNotExist:
+            return Response({
+                'message': 'The logged in user is not a vendor'},
+                status=status.HTTP_404_NOT_FOUND
+            )
 
     @action(methods=['put'], detail=False, url_path="updatebusiness")
     def update_current(self, request):
@@ -83,6 +116,7 @@ class VendorSerializer(serializers.ModelSerializer):
     """JSON serializer for vendor types
     """
     user = UserSerializer(many=False)
+    vendor_reviews = serializers.SerializerMethodField()
 
     class Meta:
         model = Vendor
@@ -90,7 +124,12 @@ class VendorSerializer(serializers.ModelSerializer):
         fields = ("id", "user", "vendor_type", "business_name", "city", "state",
                   "zip_code", "description", "profile_image", "years_in_business",
                   "contracts", "average_rating", "average_cost", "total_hired_count",
-                  "allowed_sizes")
+                  "allowed_sizes", "vendor_reviews")
+
+    def get_vendor_reviews(self, instance):
+        """Order the embedded vendor_reviews list"""
+        vendor_reviews = instance.vendor_reviews.order_by('-time_sent')
+        return ReviewSerializer(vendor_reviews, many=True).data
 
 
 class UpdateVendorSerializer(serializers.ModelSerializer):
