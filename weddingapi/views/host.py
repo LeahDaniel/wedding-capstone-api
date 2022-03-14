@@ -40,6 +40,8 @@ class HostView(ViewSet):
                 'message': 'The logged in user is not a host'},
                 status=status.HTTP_404_NOT_FOUND
             )
+            
+    
 
 
 

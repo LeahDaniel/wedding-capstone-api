@@ -21,6 +21,7 @@ class Vendor(models.Model):
     wedding_sizes = models.ManyToManyField(
         "WeddingSize", through="VendorWeddingSize", related_name="vendor_wedding_sizes")
 
+
     @property
     def average_rating(self):
         """ Average of rating scores """

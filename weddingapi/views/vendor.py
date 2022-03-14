@@ -22,7 +22,7 @@ class VendorView(ViewSet):
         """
         try:
             vendor = Vendor.objects.get(pk=pk)
-            
+
             serializer = VendorSerializer(vendor)
             return Response(serializer.data)
         except Vendor.DoesNotExist as ex:
@@ -75,7 +75,6 @@ class VendorView(ViewSet):
                 'message': 'The logged in user is not a vendor'},
                 status=status.HTTP_404_NOT_FOUND
             )
-            
 
     @action(methods=['put'], detail=False, url_path="updatebusiness")
     def update_current(self, request):
@@ -93,6 +92,7 @@ class VendorView(ViewSet):
                 'message': 'The logged in user is not a vendor'},
                 status=status.HTTP_404_NOT_FOUND
             )
+
 
 
 class VendorSerializer(serializers.ModelSerializer):
