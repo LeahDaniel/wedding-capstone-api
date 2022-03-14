@@ -17,9 +17,9 @@ from django.conf.urls import include
 from django.contrib import admin
 from django.urls import path
 from rest_framework import routers
-from weddingapi.views import (HostView, MessageView, RatingView, ReviewView,
-                              VendorView, login_user, register_host,
-                              register_vendor)
+from weddingapi.views import (HostVendorView, HostView, MessageView,
+                              RatingView, ReviewView, VendorView, login_user,
+                              register_host, register_vendor)
 
 router = routers.DefaultRouter(trailing_slash=False)
 router.register(r'hosts', HostView, 'host')
@@ -27,6 +27,7 @@ router.register(r'vendors', VendorView, 'vendor')
 router.register(r'messages', MessageView, 'message')
 router.register(r'ratings', RatingView, 'rating')
 router.register(r'reviews', ReviewView, 'review')
+router.register(r'hostvendors', HostVendorView, 'host vendor')
 
 
 urlpatterns = [

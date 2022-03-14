@@ -10,6 +10,18 @@ from .auth import UserSerializer
 
 class HostView(ViewSet):
     """Host view"""
+    
+    def list(self, request):
+        """Handle GET requests to get all hosts
+
+        Returns:
+            Response -- JSON serialized list of hosts
+        """
+
+        hosts = Host.objects.all()
+        serializer = HostSerializer(hosts, many=True)
+        return Response(serializer.data)
+
 
     @action(methods=['get'], detail=False, url_path="profile")
     def get_current(self, request):

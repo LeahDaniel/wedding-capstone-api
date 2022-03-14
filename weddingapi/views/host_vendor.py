@@ -10,6 +10,17 @@ from weddingapi.models.vendor import Vendor
 
 class HostVendorView(ViewSet):
     """HostVendor view"""
+    
+    def list(self, request):
+        """Handle GET requests to get all hosts
+
+        Returns:
+            Response -- JSON serialized list of hosts
+        """
+
+        host_vendors = HostVendor.objects.all()
+        serializer = HostVendorSerializer(host_vendors, many=True)
+        return Response(serializer.data)
 
     def create(self, request):
         """Handle POST operations

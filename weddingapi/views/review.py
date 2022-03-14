@@ -7,6 +7,17 @@ from weddingapi.models import Review, Host
 
 class ReviewView(ViewSet):
     """Review view"""
+    
+    def list(self, request):
+        """Handle GET requests to get all reviews
+
+        Returns:
+            Response -- JSON serialized list of reviews
+        """
+
+        reviews = Review.objects.all()
+        serializer = ReviewSerializer(reviews, many=True)
+        return Response(serializer.data)
 
     def create(self, request):
         """Handle POST operations

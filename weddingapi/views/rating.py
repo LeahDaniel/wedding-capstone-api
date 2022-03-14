@@ -8,6 +8,17 @@ from weddingapi.models import Rating, Host
 class RatingView(ViewSet):
     """Rating view"""
 
+    def list(self, request):
+        """Handle GET requests to get all ratings
+
+        Returns:
+            Response -- JSON serialized list of ratings
+        """
+
+        ratings = Rating.objects.all()
+        serializer = RatingSerializer(ratings, many=True)
+        return Response(serializer.data)
+    
     def create(self, request):
         """Handle POST operations
 
