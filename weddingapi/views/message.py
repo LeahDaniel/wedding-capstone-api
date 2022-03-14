@@ -1,11 +1,10 @@
 """View module for handling requests about messages"""
-from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-from django.db.models import Q
 from rest_framework import serializers, status
 from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
-from weddingapi.models import Message
+from rest_framework.decorators import action
+from weddingapi.models import Message, Host, Vendor
 
 
 class MessageView(ViewSet):
@@ -18,24 +17,18 @@ class MessageView(ViewSet):
             Response -- JSON serialized list of messages
         """
 
-        user = request.auth.user
-
-        messages = Message.objects.filter(Q(sender=user) | Q(
-            recipient=user)).order_by('-time_sent')
-
         vendor_id = request.query_params.get('vendor', None)
-        vendor = User.objects.get(vendor_user__id=vendor_id)
-        
         host_id = request.query_params.get('host', None)
-        host = User.objects.get(host_user__id=host_id)
 
-        if vendor is not None:
-            messages = messages.filter(Q(sender=vendor) | Q(
-                recipient=vendor))
-            
-        if host is not None:
-            messages = messages.filter(Q(sender=host) | Q(
-                recipient=host))
+        messages = Message.objects.order_by("-time_sent")
+
+        if vendor_id is not None:
+            vendor = Vendor.objects.get(pk=vendor_id)
+            messages = messages.filter(vendor=vendor)
+
+        if host_id is not None:
+            host = Host.objects.get(pk=host_id)
+            messages = messages.filter(host=host)
 
         serializer = MessageSerializer(messages, many=True)
         return Response(serializer.data)
@@ -46,11 +39,10 @@ class MessageView(ViewSet):
         Returns:
             Response -- JSON serialized message instance
         """
-        user=request.auth.user
         try:
             serializer = CreateMessageSerializer(data=request.data)
             serializer.is_valid(raise_exception=True)
-            serializer.save(sender=user)
+            serializer.save(sender=request.auth.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         except ValidationError as ex:
             return Response({'message': ex.args[0]}, status=status.HTTP_400_BAD_REQUEST)
@@ -84,18 +76,55 @@ class MessageView(ViewSet):
         message.delete()
         return Response(None, status=status.HTTP_204_NO_CONTENT)
 
+    @action(methods=['get'], detail=False, url_path="vendorthreads")
+    def get_vendor_threads(self, request):
+        """Get most recent messages associated with each message thread"""
+
+        messages = Message.objects.filter(host__user=request.auth.user).raw("""
+            SELECT m.id, m.body, m.vendor_id, m.sender_id, m.host_id,
+                v.business_name, MAX(m.time_sent)
+            FROM weddingapi_message m
+            JOIN weddingapi_vendor v ON m.vendor_id = v.id
+            GROUP BY vendor_id
+            """)
+
+        serializer = ThreadSerializer(messages, many=True)
+        return Response(serializer.data)
+    
+    @action(methods=['get'], detail=False, url_path="hostthreads")
+    def get_host_threads(self, request):
+        """Get most recent messages associated with each message thread"""
+
+        messages = Message.objects.filter(vendor__user=request.auth.user).raw("""
+            SELECT m.id, m.body, m.vendor_id, m.sender_id, m.host_id,
+                u.username, MAX(m.time_sent)
+            FROM weddingapi_message m
+            JOIN weddingapi_host h ON m.host_id = h.id
+            JOIN auth_user u ON h.user_id = u.id
+            GROUP BY host_id
+            """)
+
+        serializer = ThreadSerializer(messages, many=True)
+        return Response(serializer.data)
 
 
 class MessageSerializer(serializers.ModelSerializer):
     """JSON serializer for messages
     """
-    
+
     class Meta:
         model = Message
-        fields = ('id', 'sender', 'recipient', 'body', 'time_sent')
+        depth= 1
+        fields = ('id', 'vendor', 'host', 'body', 'time_sent', 'sender_id')
 
 
 class CreateMessageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Message
-        fields = ('recipient', 'body')
+        fields = ('vendor', 'host', 'body')
+
+
+class ThreadSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Message
+        fields = ('id','vendor_id', 'host_id', 'body', 'sender_id')

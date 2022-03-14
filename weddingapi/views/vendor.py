@@ -23,11 +23,6 @@ class VendorView(ViewSet):
         try:
             vendor = Vendor.objects.get(pk=pk)
             
-            user_id = request.query_params.get('user', None)
-
-            if user_id is not None:
-                vendor = Vendor.objects.get(user_id=user_id)
-            
             serializer = VendorSerializer(vendor)
             return Response(serializer.data)
         except Vendor.DoesNotExist as ex:
@@ -81,18 +76,6 @@ class VendorView(ViewSet):
                 status=status.HTTP_404_NOT_FOUND
             )
             
-    @action(methods=['get'], detail=False, url_path="user")
-    def get_vendor_for_user(self, request):
-        """Get a vendor back based on a given user id"""
-        try:
-            vendor = Vendor.objects.get(user=request.auth.user)
-            serializer = VendorSerializer(vendor)
-            return Response(serializer.data)
-        except Vendor.DoesNotExist:
-            return Response({
-                'message': 'The logged in user is not a vendor'},
-                status=status.HTTP_404_NOT_FOUND
-            )
 
     @action(methods=['put'], detail=False, url_path="updatebusiness")
     def update_current(self, request):

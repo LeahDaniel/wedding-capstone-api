@@ -73,6 +73,8 @@ def register_vendor(request):
         profile_image=request.data["profile_image"],
         years_in_business=request.data["years_in_business"]
     )
+    
+    vendor.wedding_sizes.set(request.data["wedding_sizes"])
 
     token = Token.objects.create(user=vendor.user)
 

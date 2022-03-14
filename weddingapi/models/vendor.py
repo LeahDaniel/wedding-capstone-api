@@ -5,7 +5,8 @@ from .rating import Rating
 
 
 class Vendor(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="vendor_user")
+    user = models.OneToOneField(
+        User, on_delete=models.CASCADE, related_name="vendor_user")
     vendor_type = models.ForeignKey(
         "VendorType", on_delete=models.SET_NULL, null=True)
     business_name = models.CharField(max_length=85)
@@ -17,6 +18,8 @@ class Vendor(models.Model):
     zip_code = models.CharField(max_length=5)
     description = models.TextField()
     years_in_business = models.PositiveSmallIntegerField()
+    wedding_sizes = models.ManyToManyField(
+        "WeddingSize", through="VendorWeddingSize", related_name="vendor_wedding_sizes")
 
     @property
     def average_rating(self):
@@ -56,4 +59,3 @@ class Vendor(models.Model):
         host_vendors = HostVendor.objects.filter(vendor=self)
 
         return len(host_vendors)
-    
