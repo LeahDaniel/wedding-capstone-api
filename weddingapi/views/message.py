@@ -5,6 +5,8 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
 from rest_framework.decorators import action
 from weddingapi.models import Message, Host, Vendor
+from weddingapi.views.host import HostSerializer
+from weddingapi.views.host_vendor import SimpleVendorSerializer
 
 
 class MessageView(ViewSet):
@@ -20,7 +22,7 @@ class MessageView(ViewSet):
         vendor_id = request.query_params.get('vendor', None)
         host_id = request.query_params.get('host', None)
 
-        messages = Message.objects.order_by("-time_sent")
+        messages = Message.objects.order_by("time_sent")
 
         if vendor_id is not None:
             vendor = Vendor.objects.get(pk=vendor_id)
@@ -130,6 +132,9 @@ class CreateMessageSerializer(serializers.ModelSerializer):
 
 
 class ThreadSerializer(serializers.ModelSerializer):
+    host = HostSerializer(many=False)
+    vendor = SimpleVendorSerializer(many=False)
+    
     class Meta:
         model = Message
-        fields = ('id','vendor_id', 'host_id', 'body', 'sender_id')
+        fields = ('id','vendor', 'host', 'sender', 'body')

@@ -47,16 +47,28 @@ class HostVendorView(ViewSet):
         host_vendor.delete()
         return Response(None, status=status.HTTP_204_NO_CONTENT)
 
-    @action(methods=['put'], detail=False, url_path="quote")
-    def add_quote(self, request):
+    @action(methods=['get'], detail=False, url_path="contract")
+    def find_contract(self, request):
         """Add a cost per hour to a hostVendor relationship"""
 
-        vendor = Vendor.objects.get(user=request.auth.user)
+        try:
+            vendor_id = request.query_params.get('vendor', None)
+            host_id = request.query_params.get('host', None)
 
-        host_vendor = HostVendor.objects.get(
-            host_id=request.data["host_id"],
-            vendor=vendor
-        )
+            if vendor_id and host_id:
+                host_vendor = HostVendor.objects.get(
+                    vendor_id=vendor_id, host_id=host_id)
+
+            serializer = HostVendorSerializer(host_vendor, many=False)
+            return Response(serializer.data)
+        except HostVendor.DoesNotExist:
+            return Response(None)
+
+    @action(methods=['put'], detail=True, url_path="quote")
+    def add_quote(self, request, pk):
+        """Add a cost per hour to a hostVendor relationship"""
+
+        host_vendor = HostVendor.objects.get(pk=pk)
 
         host_vendor.cost_per_hour = request.data["cost_per_hour"]
         host_vendor.save()
@@ -64,33 +76,22 @@ class HostVendorView(ViewSet):
         serializer = HostVendorSerializer(host_vendor, many=False)
         return Response(serializer.data)
 
-    @action(methods=['put'], detail=False, url_path="hire")
-    def hire(self, request):
+    @action(methods=['put'], detail=True, url_path="hire")
+    def hire(self, request, pk):
         """Add a cost per hour to a hostVendor relationship"""
 
-        host = Host.objects.get(user=request.auth.user)
-
-        host_vendor = HostVendor.objects.get(
-            vendor_id=request.data["vendor_id"],
-            host=host
-        )
-
+        host_vendor = HostVendor.objects.get(pk=pk)
         host_vendor.hired = True
         host_vendor.save()
 
         serializer = HostVendorSerializer(host_vendor, many=False)
         return Response(serializer.data)
 
-    @action(methods=['put'], detail=False, url_path="fire")
-    def fire(self, request):
+    @action(methods=['put'], detail=True, url_path="fire")
+    def fire(self, request, pk):
         """Add a cost per hour to a hostVendor relationship"""
 
-        host = Host.objects.get(user=request.auth.user)
-
-        host_vendor = HostVendor.objects.get(
-            vendor_id=request.data["vendor_id"],
-            host=host
-        )
+        host_vendor = HostVendor.objects.get(pk=pk)
 
         host_vendor.fired = True
         host_vendor.save()
