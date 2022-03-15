@@ -58,7 +58,8 @@ class HostVendorView(ViewSet):
         )
 
         host_vendor.cost_per_hour = request.data["cost_per_hour"]
-
+        host_vendor.save()
+        
         serializer = HostVendorSerializer(host_vendor, many=False)
         return Response(serializer.data)
 
@@ -74,7 +75,8 @@ class HostVendorView(ViewSet):
         )
 
         host_vendor.hired = True
-
+        host_vendor.save()
+        
         serializer = HostVendorSerializer(host_vendor, many=False)
         return Response(serializer.data)
     
@@ -90,7 +92,8 @@ class HostVendorView(ViewSet):
         )
 
         host_vendor.fired = True
-
+        host_vendor.save()
+        
         serializer = HostVendorSerializer(host_vendor, many=False)
         return Response(serializer.data)
 
