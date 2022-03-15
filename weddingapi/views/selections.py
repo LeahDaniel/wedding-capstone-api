@@ -11,7 +11,8 @@ class WeddingSizeSerializer(serializers.ModelSerializer):
     class Meta:
         model = WeddingSize
         fields = ['id', 'min_guests', 'max_guests', 'label']
-        
+
+
 class VendorTypeSerializer(serializers.ModelSerializer):
     """JSON serializer for vendorTypes
     """
@@ -23,7 +24,6 @@ class VendorTypeSerializer(serializers.ModelSerializer):
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def get_wedding_sizes(request):
-
     """Handle GET requests to get all weddingSizes
 
     Returns:
@@ -34,10 +34,10 @@ def get_wedding_sizes(request):
     serializer = WeddingSizeSerializer(wedding_sizes, many=True)
     return Response(serializer.data)
 
+
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def get_vendor_types(request):
-
     """Handle GET requests to get all vendorTypes
 
     Returns:
@@ -47,4 +47,3 @@ def get_vendor_types(request):
     vendor_types = VendorType.objects.all()
     serializer = VendorTypeSerializer(vendor_types, many=True)
     return Response(serializer.data)
-

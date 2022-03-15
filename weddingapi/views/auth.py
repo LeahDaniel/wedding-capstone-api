@@ -1,5 +1,10 @@
+import base64
+import uuid
+
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
+from django.core.files.base import ContentFile
+from django.db import IntegrityError
 from rest_framework import serializers
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view, permission_classes
@@ -54,32 +59,42 @@ def register_vendor(request):
       request -- The full HTTP request object
     '''
 
-    new_user = User.objects.create_user(
-        username=request.data['username'],
-        password=request.data['password'],
-        first_name=request.data['first_name'],
-        last_name=request.data['last_name'],
-        is_staff=True
-    )
+    try:
 
-    vendor = Vendor.objects.create(
-        user=new_user,
-        vendor_type_id=request.data['vendor_type_id'],
-        business_name=request.data['business_name'],
-        city=request.data['city'],
-        state=request.data['state'],
-        zip_code=request.data['zip_code'],
-        description=request.data["description"],
-        profile_image=request.data["profile_image"],
-        years_in_business=request.data["years_in_business"]
-    )
-    
-    vendor.wedding_sizes.set(request.data["wedding_sizes"])
+        new_user = User.objects.create_user(
+            username=request.data['username'],
+            password=request.data['password'],
+            first_name=request.data['first_name'],
+            last_name=request.data['last_name'],
+            is_staff=True
+        )
 
-    token = Token.objects.create(user=vendor.user)
+        if request.data["profile_image"] is not None:
+            format, imgstr = request.data["profile_image"].split(';base64,')
+            ext = format.split('/')[-1]
+            data = ContentFile(base64.b64decode(
+                imgstr), name=f'{request.data["username"]}-{uuid.uuid4()}.{ext}')
 
-    data = {'token': token.key}
-    return Response(data)
+        vendor = Vendor.objects.create(
+            user=new_user,
+            vendor_type_id=request.data['vendor_type_id'],
+            business_name=request.data['business_name'],
+            city=request.data['city'],
+            state=request.data['state'],
+            zip_code=request.data['zip_code'],
+            description=request.data["description"],
+            profile_image=data,
+            years_in_business=request.data["years_in_business"]
+        )
+
+        vendor.wedding_sizes.set(request.data["wedding_sizes"])
+
+        token = Token.objects.create(user=vendor.user)
+
+        data = {'token': token.key}
+        return Response(data)
+    except IntegrityError as ex:
+        return Response({'message': ex.args[0]})
 
 
 @api_view(['POST'])
@@ -90,28 +105,36 @@ def register_host(request):
     Method arguments:
       request -- The full HTTP request object
     '''
+    try:
+        new_user = User.objects.create_user(
+            username=request.data['username'],
+            password=request.data['password'],
+            first_name=request.data['first_name'],
+            last_name=request.data['last_name'],
+            is_staff=False
+        )
 
-    new_user = User.objects.create_user(
-        username=request.data['username'],
-        password=request.data['password'],
-        first_name=request.data['first_name'],
-        last_name=request.data['last_name'],
-        is_staff=False
-    )
+        if request.data["profile_image"] is not None:
+            format, imgstr = request.data["profile_image"].split(';base64,')
+            ext = format.split('/')[-1]
+            data = ContentFile(base64.b64decode(
+                imgstr), name=f'{request.data["username"]}-{uuid.uuid4()}.{ext}')
 
-    host = Host.objects.create(
-        user=new_user,
-        wedding_size_id=request.data['wedding_size_id'],
-        profile_image=request.data["profile_image"],
-        date=request.data["date"],
-        time=request.data["time"],
-        street_address=request.data['street_address'],
-        city=request.data['city'],
-        state=request.data['state'],
-        zip_code=request.data['zip_code']
-    )
+        host = Host.objects.create(
+            user=new_user,
+            wedding_size_id=request.data['wedding_size_id'],
+            profile_image=data,
+            date=request.data["date"],
+            time=request.data["time"],
+            street_address=request.data['street_address'],
+            city=request.data['city'],
+            state=request.data['state'],
+            zip_code=request.data['zip_code']
+        )
 
-    token = Token.objects.create(user=host.user)
+        token = Token.objects.create(user=host.user)
 
-    data = {'token': token.key}
-    return Response(data)
+        data = {'token': token.key}
+        return Response(data)
+    except IntegrityError as ex:
+        return Response({'message': ex.args[0]})

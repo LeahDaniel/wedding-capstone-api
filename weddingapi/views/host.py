@@ -65,7 +65,8 @@ class HostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Host
         depth = 1
-        fields = "__all__"
+        fields = ("id", "wedding_size", "date", "time",
+                  "street_address", "city", "state", "zip_code", "user", "profile_image")
 
 
 class UpdateHostSerializer(serializers.ModelSerializer):
