@@ -6,6 +6,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
 from weddingapi.models import Host, Vendor
+from weddingapi.views.host_vendor import HostVendorSerializer
 from weddingapi.views.review import ReviewSerializer
 
 from .auth import UserSerializer
@@ -100,6 +101,7 @@ class VendorSerializer(serializers.ModelSerializer):
     """
     user = UserSerializer(many=False)
     vendor_reviews = serializers.SerializerMethodField()
+    contracts = serializers.SerializerMethodField()
 
     class Meta:
         model = Vendor
@@ -113,6 +115,11 @@ class VendorSerializer(serializers.ModelSerializer):
         """Order the embedded vendor_reviews list"""
         vendor_reviews = instance.vendor_reviews.order_by('-time_sent')
         return ReviewSerializer(vendor_reviews, many=True).data
+    
+    def get_contracts(self, instance):
+        """Filter the embedded contracts list"""
+        contracts = instance.contracts.filter(hired=True, fired=False)
+        return HostVendorSerializer(contracts, many=True).data
 
 
 class UpdateVendorSerializer(serializers.ModelSerializer):

@@ -10,7 +10,7 @@ from weddingapi.models.vendor import Vendor
 
 class HostVendorView(ViewSet):
     """HostVendor view"""
-    
+
     def list(self, request):
         """Handle GET requests to get all hosts
 
@@ -59,7 +59,7 @@ class HostVendorView(ViewSet):
 
         host_vendor.cost_per_hour = request.data["cost_per_hour"]
         host_vendor.save()
-        
+
         serializer = HostVendorSerializer(host_vendor, many=False)
         return Response(serializer.data)
 
@@ -76,10 +76,10 @@ class HostVendorView(ViewSet):
 
         host_vendor.hired = True
         host_vendor.save()
-        
+
         serializer = HostVendorSerializer(host_vendor, many=False)
         return Response(serializer.data)
-    
+
     @action(methods=['put'], detail=False, url_path="fire")
     def fire(self, request):
         """Add a cost per hour to a hostVendor relationship"""
@@ -93,7 +93,7 @@ class HostVendorView(ViewSet):
 
         host_vendor.fired = True
         host_vendor.save()
-        
+
         serializer = HostVendorSerializer(host_vendor, many=False)
         return Response(serializer.data)
 
@@ -112,4 +112,3 @@ class CreateHostVendorSerializer(serializers.ModelSerializer):
     class Meta:
         model = HostVendor
         fields = ('vendor',)
-
