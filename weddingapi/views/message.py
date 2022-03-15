@@ -80,13 +80,16 @@ class MessageView(ViewSet):
     def get_vendor_threads(self, request):
         """Get most recent messages associated with each message thread"""
 
-        messages = Message.objects.filter(host__user=request.auth.user).raw("""
+        host = Host.objects.get(user=request.auth.user)
+        
+        messages = Message.objects.raw("""
             SELECT m.id, m.body, m.vendor_id, m.sender_id, m.host_id,
                 v.business_name, MAX(m.time_sent)
             FROM weddingapi_message m
             JOIN weddingapi_vendor v ON m.vendor_id = v.id
+            WHERE m.host_id IS %s
             GROUP BY vendor_id
-            """)
+            """, (host.id, ))
 
         serializer = ThreadSerializer(messages, many=True)
         return Response(serializer.data)
@@ -95,14 +98,16 @@ class MessageView(ViewSet):
     def get_host_threads(self, request):
         """Get most recent messages associated with each message thread"""
 
-        messages = Message.objects.filter(vendor__user=request.auth.user).raw("""
-            SELECT m.id, m.body, m.vendor_id, m.sender_id, m.host_id,
-                u.username, MAX(m.time_sent)
+        vendor = Vendor.objects.get(user=request.auth.user)
+        messages = Message.objects.raw("""
+            SELECT m.id, m.vendor_id, m.sender_id, m.host_id, m.body,
+                u.username host_username, MAX(m.time_sent)
             FROM weddingapi_message m
             JOIN weddingapi_host h ON m.host_id = h.id
             JOIN auth_user u ON h.user_id = u.id
+            WHERE m.vendor_id IS %s
             GROUP BY host_id
-            """)
+            """, (vendor.id, ))
 
         serializer = ThreadSerializer(messages, many=True)
         return Response(serializer.data)
