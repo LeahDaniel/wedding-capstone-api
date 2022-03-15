@@ -11,6 +11,7 @@ from weddingapi.helpers import CITIES
 from weddingapi.models import (Host, Rating, Review, Vendor, VendorType,
                                VendorWeddingSize, WeddingSize)
 from weddingapi.models.host_vendor import HostVendor
+from weddingapi.models.message import Message
 
 
 class Command(BaseCommand):
@@ -106,9 +107,11 @@ class Command(BaseCommand):
             self.create_ratings(host, vendors)
             self.create_reviews(host, vendors)
             self.create_contracts(host, vendors)
+            self.create_messages_from_host(host, vendors)
 
         for vendor in vendors:
             self.create_vendor_wedding_sizes(vendor)
+            self.create_messages_from_vendor(vendor, hosts)
 
     def create_ratings(self, host, vendors):
         """_summary_
@@ -136,7 +139,7 @@ class Command(BaseCommand):
                     body=self.faker.paragraph(),
                     time_sent=self.faker.date_time()
                 )
-                
+
     def create_contracts(self, host, vendors):
         """_summary_
 
@@ -148,8 +151,8 @@ class Command(BaseCommand):
                         vendor=vendor,
                         host=host,
                         cost_per_hour=round(random.uniform(33.33, 250.25), 2),
-                        hired= random.choice([False, True]),
-                        fired= False
+                        hired=random.choice([False, True]),
+                        fired=False
                     )
 
     def create_vendor_wedding_sizes(self, vendor):
@@ -174,3 +177,33 @@ class Command(BaseCommand):
                 vendor=vendor,
                 wedding_size=WeddingSize.objects.get(pk=1)
             )
+
+    def create_messages_from_host(self, host, vendors):
+        """_summary_
+
+        """
+        if host.id % 2 == 0 or host.id % 3 == 0:
+            for vendor in vendors:
+                if vendor.id % 2 == 0:
+                    Message.objects.create(
+                        vendor=vendor,
+                        host=host,
+                        sender=host.user,
+                        body=self.faker.paragraph(),
+                        time_sent=self.faker.date_time()
+                    )
+                    
+    def create_messages_from_vendor(self, vendor, hosts):
+        """_summary_
+
+        """
+        if vendor.id % 2 == 0:
+            for host in hosts:
+                if host.id % 2 == 0  or host.id % 3 == 0:
+                    Message.objects.create(
+                        host=host,
+                        vendor=vendor,
+                        sender=vendor.user,
+                        body=self.faker.paragraph(),
+                        time_sent=self.faker.date_time()
+                    )
