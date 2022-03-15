@@ -11,6 +11,19 @@ from .auth import UserSerializer
 class HostView(ViewSet):
     """Host view"""
     
+    def retrieve(self, request, pk):
+        """Handle GET requests for single host
+
+        Returns:
+            Response -- JSON serialized host
+        """
+        try:
+            host = Host.objects.get(pk=pk)
+            serializer = HostSerializer(host)
+            return Response(serializer.data)
+        except Host.DoesNotExist as ex:
+            return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
+    
     def list(self, request):
         """Handle GET requests to get all hosts
 
