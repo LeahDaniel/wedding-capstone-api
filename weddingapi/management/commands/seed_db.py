@@ -53,7 +53,6 @@ class Command(BaseCommand):
             Host.objects.create(
                 user=user,
                 wedding_size=WeddingSize.objects.get(pk=random.randint(1, 3)),
-                profile_image=None,
                 date=self.faker.date_this_year(),
                 time=self.faker.time(),
                 street_address=self.faker.street_address(),
@@ -61,7 +60,8 @@ class Command(BaseCommand):
                 state="TN",
                 # city=self.faker.city(),
                 # state=random.choice(STATES),
-                zip_code=self.faker.postcode()[0:5]
+                zip_code=self.faker.postcode()[0:5],
+                profile_image="hostprofile/placeholder-1-e1533569576673-960x960.png"
             )
 
             Token.objects.create(
@@ -85,14 +85,14 @@ class Command(BaseCommand):
                 vendor_type=VendorType.objects.get(
                     pk=random.randint(1, VendorType.objects.count())),
                 business_name=self.faker.ecommerce_name(),
-                profile_image=None,
                 city=random.choice(CITIES),
                 state="TN",
                 # city=self.faker.city(),
                 # state=random.choice(STATES),
                 zip_code=self.faker.postcode()[0:5],
                 description=self.faker.paragraph(),
-                years_in_business=random.randint(1, 150)
+                years_in_business=random.randint(1, 150),
+                profile_image="vendorprofile/placeholder-1-e1533569576673-960x960 (1).png"
             )
 
             Token.objects.create(

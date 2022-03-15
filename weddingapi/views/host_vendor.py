@@ -4,8 +4,9 @@ from rest_framework import serializers, status
 from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
 from rest_framework.decorators import action
-from weddingapi.models import HostVendor, Host
-from weddingapi.models.vendor import Vendor
+from weddingapi.models import HostVendor, Host, Vendor
+from weddingapi.views.auth import UserSerializer
+from .host import HostSerializer
 
 
 class HostVendorView(ViewSet):
@@ -98,13 +99,25 @@ class HostVendorView(ViewSet):
         return Response(serializer.data)
 
 
+class SimpleVendorSerializer(serializers.ModelSerializer):
+    """JSON serializer for vendor types
+    """
+    user = UserSerializer(many=False)
+
+    class Meta:
+        model = Vendor
+        fields = ("id", "user")
+
+
 class HostVendorSerializer(serializers.ModelSerializer):
     """JSON serializer for hostVendors
     """
+    host = HostSerializer(many=False)
+    vendor = SimpleVendorSerializer(many=False)
 
     class Meta:
         model = HostVendor
-        depth = 1
+        depth = 2
         fields = ('id', 'vendor', 'host', 'cost_per_hour', 'hired', 'fired')
 
 
