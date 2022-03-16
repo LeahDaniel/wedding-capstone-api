@@ -33,7 +33,7 @@ class Vendor(models.Model):
             for rating in ratings:
                 total_rating += rating.score
 
-            return total_rating / len(ratings)
+            return round(total_rating / len(ratings), 1)
         else:
             return None
 
@@ -50,7 +50,7 @@ class Vendor(models.Model):
                 if(contract.cost_per_hour):
                     total_cost += contract.cost_per_hour
 
-            return total_cost / len(host_vendors)
+            return round(total_cost / len(host_vendors), 2)
         else:
             return None
 

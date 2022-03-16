@@ -126,4 +126,4 @@ class UpdateVendorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Vendor
         fields = ("vendor_type", "business_name", "city", "state",
-                  "zip_code", "description", "profile_image", "years_in_business")
+                  "zip_code", "description", "years_in_business", "allowed_sizes")

@@ -2,12 +2,15 @@ from django.core.exceptions import ValidationError
 from rest_framework import serializers, status
 from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
-from weddingapi.models import Review, Host
+from weddingapi.models import Host, Review
+from weddingapi.models.vendor import Vendor
+from weddingapi.views.auth import UserSerializer
+from weddingapi.views.host import HostSerializer
 
 
 class ReviewView(ViewSet):
     """Review view"""
-    
+
     def list(self, request):
         """Handle GET requests to get all reviews
 
@@ -58,9 +61,23 @@ class ReviewView(ViewSet):
         return Response(None, status=status.HTTP_204_NO_CONTENT)
 
 
+class SimpleVendorSerializer(serializers.ModelSerializer):
+    """JSON serializer for vendor types
+    """
+    user = UserSerializer(many=False)
+
+    class Meta:
+        model = Vendor
+        fields = ("id", "user")
+
+
 class ReviewSerializer(serializers.ModelSerializer):
+    vendor = SimpleVendorSerializer(many=False)
+    host = HostSerializer(many=False)
+
     class Meta:
         model = Review
+        depth = 2
         fields = ("id", "vendor", "host", "body", "time_sent")
 
 
