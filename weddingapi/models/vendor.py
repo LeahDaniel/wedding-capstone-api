@@ -47,7 +47,8 @@ class Vendor(models.Model):
 
         if len(host_vendors) > 0:
             for contract in host_vendors:
-                total_cost += contract.cost_per_hour
+                if(contract.cost_per_hour):
+                    total_cost += contract.cost_per_hour
 
             return total_cost / len(host_vendors)
         else:

@@ -11,12 +11,27 @@ from .host import HostSerializer
 
 class HostVendorView(ViewSet):
     """HostVendor view"""
-
-    def list(self, request):
-        """Handle GET requests to get all hosts
+    
+    def retrieve(self, request, pk):
+        """Handle GET requests for single hostVendor
 
         Returns:
-            Response -- JSON serialized list of hosts
+            Response -- JSON serialized hostVendor
+        """
+        try:
+            host_vendor = HostVendor.objects.get(pk=pk)
+
+            serializer = HostVendorSerializer(host_vendor)
+            return Response(serializer.data)
+        except HostVendor.DoesNotExist as ex:
+            return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
+
+
+    def list(self, request):
+        """Handle GET requests to get all host vendors
+
+        Returns:
+            Response -- JSON serialized list of host vendors
         """
 
         host_vendors = HostVendor.objects.all()
@@ -62,7 +77,7 @@ class HostVendorView(ViewSet):
             serializer = HostVendorSerializer(host_vendor, many=False)
             return Response(serializer.data)
         except HostVendor.DoesNotExist:
-            return Response(None)
+            return Response({"found": False})
 
     @action(methods=['put'], detail=True, url_path="quote")
     def add_quote(self, request, pk):
