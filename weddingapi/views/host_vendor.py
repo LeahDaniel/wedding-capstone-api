@@ -140,4 +140,4 @@ class HostVendorSerializer(serializers.ModelSerializer):
 class CreateHostVendorSerializer(serializers.ModelSerializer):
     class Meta:
         model = HostVendor
-        fields = ('vendor',)
+        fields = ('id', 'vendor')
