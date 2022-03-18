@@ -6,7 +6,7 @@ from rest_framework.viewsets import ViewSet
 from rest_framework.decorators import action
 from weddingapi.models import Message, Host, Vendor
 from weddingapi.views.host import HostSerializer
-from weddingapi.views.host_vendor import SimpleVendorSerializer
+from weddingapi.views.vendor import SimpleVendorSerializer
 
 
 class MessageView(ViewSet):

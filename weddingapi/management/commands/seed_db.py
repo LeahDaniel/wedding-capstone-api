@@ -37,7 +37,7 @@ class Command(BaseCommand):
         else:
             self.create_users()
 
-    def create_users(self, vendor_count=25):
+    def create_users(self, vendor_count=100):
         """Create random users"""
         for _ in range(10):
             first_name = self.faker.first_name()
@@ -54,7 +54,8 @@ class Command(BaseCommand):
             Host.objects.create(
                 user=user,
                 wedding_size=WeddingSize.objects.get(pk=random.randint(1, 3)),
-                date=self.faker.date_this_year(),
+                date=random.choice(
+                    ["2022-01-01", "2022-04-25"]),
                 time=self.faker.time(),
                 street_address=self.faker.street_address(),
                 city=random.choice(CITIES),
@@ -62,7 +63,7 @@ class Command(BaseCommand):
                 # city=self.faker.city(),
                 # state=random.choice(STATES),
                 zip_code=self.faker.postcode()[0:5],
-                profile_image="hostprofile/placeholder-1-e1533569576673-960x960.png"
+                profile_image=random.choice(["hostprofile/image1.jpeg", "hostprofile/image2.jpeg"])
             )
 
             Token.objects.create(
@@ -93,7 +94,7 @@ class Command(BaseCommand):
                 zip_code=self.faker.postcode()[0:5],
                 description=self.faker.paragraph(),
                 years_in_business=random.randint(1, 150),
-                profile_image="vendorprofile/placeholder-1-e1533569576673-960x960 (1).png"
+                profile_image=random.choice(["vendorprofile/image1.jpg", "vendorprofile/image2.jpeg"])
             )
 
             Token.objects.create(
@@ -117,9 +118,8 @@ class Command(BaseCommand):
         """_summary_
 
         """
-
-        for vendor in vendors:
-            for _ in range(1, random.randint(5, 10)):
+        if host.id % 2 == 0 or host.id % 3 == 0:
+            for vendor in vendors:
                 Rating.objects.create(
                     vendor=vendor,
                     host=host,
@@ -130,9 +130,8 @@ class Command(BaseCommand):
         """_summary_
 
         """
-
-        for vendor in vendors:
-            for _ in range(1, random.randint(2, 3)):
+        if host.id % 2 == 0 or host.id % 3 == 0:
+            for vendor in vendors:
                 Review.objects.create(
                     vendor=vendor,
                     host=host,
@@ -146,14 +145,19 @@ class Command(BaseCommand):
         """
         if host.id % 2 == 0 or host.id % 3 == 0:
             for vendor in vendors:
-                if vendor.id % 2 == 0:
-                    HostVendor.objects.create(
-                        vendor=vendor,
-                        host=host,
-                        cost_per_hour=round(random.uniform(33.33, 250.25), 2),
-                        hired=random.choice([False, True]),
-                        fired=False
-                    )
+                random_cost = random.choice(
+                    [None, round(random.uniform(33.33, 250.25), 2)])
+                if random_cost is None:
+                    random_hire = False
+                else:
+                    random_hire = random.choice([False, True])
+                HostVendor.objects.create(
+                    vendor=vendor,
+                    host=host,
+                    cost_per_hour=random_cost,
+                    hired=random_hire,
+                    fired=False
+                )
 
     def create_vendor_wedding_sizes(self, vendor):
         """_summary_
@@ -192,14 +196,14 @@ class Command(BaseCommand):
                         body=self.faker.paragraph(),
                         time_sent=self.faker.date_time()
                     )
-                    
+
     def create_messages_from_vendor(self, vendor, hosts):
         """_summary_
 
         """
         if vendor.id % 2 == 0:
             for host in hosts:
-                if host.id % 2 == 0  or host.id % 3 == 0:
+                if host.id % 2 == 0 or host.id % 3 == 0:
                     Message.objects.create(
                         host=host,
                         vendor=vendor,

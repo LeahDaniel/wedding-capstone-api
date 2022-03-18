@@ -29,3 +29,7 @@ SELECT m.id, m.body, m.vendor_id, m.sender_id, m.host_id,
             JOIN auth_user u ON h.user_id = u.id
             WHERE m.vendor_id IS 2
             GROUP BY host_id
+
+SELECT * FROM weddingapi_vendor WHERE business_name IS "Practical Bacon"
+SELECT * FROM authtoken_token WHERE user_id IS 182
+SELECT * FROM auth_user WHERE id IS 182

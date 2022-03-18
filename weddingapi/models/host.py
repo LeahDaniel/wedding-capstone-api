@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from django.db import models
+from datetime import date
 
 
 class Host(models.Model):
@@ -17,3 +18,12 @@ class Host(models.Model):
     state = models.CharField(max_length=2)
     zip_code = models.CharField(max_length=5)
 
+    @property
+    def has_happened(self):
+        """ Boolean for whether the wedding has already occurred """
+        today = date.today()
+
+        if self.date <= today:
+            return True
+        else:
+            return False

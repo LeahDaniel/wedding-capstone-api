@@ -11,6 +11,23 @@ from weddingapi.views.host import HostSerializer
 class ReviewView(ViewSet):
     """Review view"""
 
+    def retrieve(self, request, pk):
+        """Handle GET requests for single review
+
+        Returns:
+            Response -- JSON serialized review
+        """
+        try:
+            host = Host.objects.get(user=request.auth.user)
+            vendor = Vendor.objects.get(pk=pk)
+
+            review = Review.objects.get(host=host, vendor=vendor)
+
+            serializer = ReviewSerializer(review)
+            return Response(serializer.data)
+        except Review.DoesNotExist:
+            return Response({'found': False})
+
     def list(self, request):
         """Handle GET requests to get all reviews
 
@@ -68,7 +85,10 @@ class SimpleVendorSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Vendor
-        fields = ("id", "user")
+        depth = 1
+        fields = ("id", "user", "vendor_type", "business_name", "city", "state",
+                  "zip_code", "description", "profile_image", "years_in_business",
+                  "average_rating", "average_cost", "total_hired_count")
 
 
 class ReviewSerializer(serializers.ModelSerializer):
@@ -84,4 +104,4 @@ class ReviewSerializer(serializers.ModelSerializer):
 class CreateReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Review
-        fields = ("vendor", "body")
+        fields = ("id", "vendor", "body")

@@ -4,14 +4,16 @@ from rest_framework import serializers, status
 from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
 from rest_framework.decorators import action
-from weddingapi.models import HostVendor, Host, Vendor
+from weddingapi.models import HostVendor, Host
+from weddingapi.models.vendor import Vendor
 from weddingapi.views.auth import UserSerializer
 from .host import HostSerializer
+from datetime import date
 
 
 class HostVendorView(ViewSet):
     """HostVendor view"""
-    
+
     def retrieve(self, request, pk):
         """Handle GET requests for single hostVendor
 
@@ -26,15 +28,30 @@ class HostVendorView(ViewSet):
         except HostVendor.DoesNotExist as ex:
             return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
 
-
     def list(self, request):
         """Handle GET requests to get all host vendors
 
         Returns:
             Response -- JSON serialized list of host vendors
         """
+        today = date.today()
+        user = request.auth.user
+        if user.is_staff is False:
+            host = Host.objects.get(user=user)
+            host_vendors = HostVendor.objects.filter(
+                host=host,
+                hired=True,
+                fired=False
+            )
+        else:
+            vendor = Vendor.objects.get(user=user)
+            host_vendors = HostVendor.objects.filter(
+                vendor=vendor,
+                hired=True,
+                fired=False,
+                host__date__gte=today
+            )
 
-        host_vendors = HostVendor.objects.all()
         serializer = HostVendorSerializer(host_vendors, many=True)
         return Response(serializer.data)
 
@@ -122,7 +139,10 @@ class SimpleVendorSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Vendor
-        fields = ("id", "user", "business_name")
+        depth = 1
+        fields = ("id", "user", "vendor_type", "business_name", "city", "state",
+                  "zip_code", "description", "profile_image", "years_in_business",
+                  "average_rating", "average_cost", "total_hired_count")
 
 
 class HostVendorSerializer(serializers.ModelSerializer):

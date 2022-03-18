@@ -6,7 +6,6 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
 from weddingapi.models import Host, Vendor
-from weddingapi.views.host_vendor import HostVendorSerializer
 from weddingapi.views.review import ReviewSerializer
 
 from .auth import UserSerializer
@@ -24,7 +23,7 @@ class VendorView(ViewSet):
         try:
             vendor = Vendor.objects.get(pk=pk)
 
-            serializer = VendorSerializer(vendor)
+            serializer = SingleVendorSerializer(vendor)
             return Response(serializer.data)
         except Vendor.DoesNotExist as ex:
             return Response({'message': ex.args[0]}, status=status.HTTP_404_NOT_FOUND)
@@ -37,17 +36,20 @@ class VendorView(ViewSet):
         """
 
         host = Host.objects.get(user=request.auth.user)
-
-        vendors = Vendor.objects.filter(
-            city__iexact=host.city,
-            state__iexact=host.state,
-            allowed_sizes__wedding_size=host.wedding_size_id
-        )
-
+        type_id = request.query_params.get('type', None)
         max_price = request.query_params.get('max_price', None)
         min_price = request.query_params.get('min_price', None)
         rating = request.query_params.get('rating', None)
 
+        vendors = Vendor.objects.filter(
+            city__iexact=host.city,
+            state__iexact=host.state,
+            allowed_sizes__wedding_size=host.wedding_size_id,
+
+        )
+
+        if type_id is not None:
+            vendors = vendors.filter(vendor_type_id=type_id)
         if max_price is not None:
             vendors = vendors.annotate(
                 cost_average=Avg("contracts__cost_per_hour")
@@ -61,7 +63,7 @@ class VendorView(ViewSet):
                 rating_average=Avg("vendor_rating__score")
             ).filter(rating_average__gte=rating)
 
-        serializer = VendorSerializer(vendors, many=True)
+        serializer = SimpleVendorSerializer(vendors, many=True)
         return Response(serializer.data)
 
     @action(methods=['get'], detail=False, url_path="profile")
@@ -69,7 +71,7 @@ class VendorView(ViewSet):
         """Get the currently logged in vendor back"""
         try:
             vendor = Vendor.objects.get(user=request.auth.user)
-            serializer = VendorSerializer(vendor)
+            serializer = SingleVendorSerializer(vendor)
             return Response(serializer.data)
         except Vendor.DoesNotExist:
             return Response({
@@ -95,31 +97,44 @@ class VendorView(ViewSet):
             )
 
 
-
-class VendorSerializer(serializers.ModelSerializer):
+class SimpleVendorSerializer(serializers.ModelSerializer):
     """JSON serializer for vendor types
     """
     user = UserSerializer(many=False)
-    vendor_reviews = serializers.SerializerMethodField()
-    contracts = serializers.SerializerMethodField()
 
     class Meta:
         model = Vendor
         depth = 1
         fields = ("id", "user", "vendor_type", "business_name", "city", "state",
                   "zip_code", "description", "profile_image", "years_in_business",
-                  "contracts", "average_rating", "average_cost", "total_hired_count",
+                  "average_rating", "average_cost", "total_hired_count")
+
+
+class SingleVendorSerializer(serializers.ModelSerializer):
+    """JSON serializer for vendor types
+    """
+    user = UserSerializer(many=False)
+    vendor_reviews = serializers.SerializerMethodField()
+    # contracts = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Vendor
+        depth = 1
+        fields = ("id", "user", "vendor_type", "business_name", "city", "state",
+                  "zip_code", "description", "profile_image", "years_in_business",
+                  "average_rating", "average_cost", "total_hired_count",
                   "allowed_sizes", "vendor_reviews")
 
     def get_vendor_reviews(self, instance):
         """Order the embedded vendor_reviews list"""
         vendor_reviews = instance.vendor_reviews.order_by('-time_sent')
         return ReviewSerializer(vendor_reviews, many=True).data
-    
-    def get_contracts(self, instance):
-        """Filter the embedded contracts list"""
-        contracts = instance.contracts.filter(hired=True, fired=False)
-        return HostVendorSerializer(contracts, many=True).data
+
+    # def get_contracts(self, instance):
+    #     """Filter the embedded contracts list"""
+        
+    #     contracts = instance.contracts.filter(hired=True, fired=False)
+    #     return HostVendorSerializer(contracts, many=True).data
 
 
 class UpdateVendorSerializer(serializers.ModelSerializer):
