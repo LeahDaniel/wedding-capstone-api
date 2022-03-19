@@ -91,6 +91,7 @@ class MessageView(ViewSet):
             JOIN weddingapi_vendor v ON m.vendor_id = v.id
             WHERE m.host_id IS %s
             GROUP BY vendor_id
+            ORDER BY MAX(m.time_sent) DESC
             """, (host.id, ))
 
         serializer = ThreadSerializer(messages, many=True)
@@ -109,6 +110,7 @@ class MessageView(ViewSet):
             JOIN auth_user u ON h.user_id = u.id
             WHERE m.vendor_id IS %s
             GROUP BY host_id
+            ORDER BY MAX(m.time_sent) DESC
             """, (vendor.id, ))
 
         serializer = ThreadSerializer(messages, many=True)

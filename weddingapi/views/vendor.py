@@ -1,6 +1,6 @@
 """View module for handling requests about vendors"""
 from django.core.exceptions import ValidationError
-from django.db.models import Avg, Q
+from django.db.models import Avg
 from rest_framework import serializers, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
