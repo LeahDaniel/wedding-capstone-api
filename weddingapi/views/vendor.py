@@ -1,6 +1,6 @@
 """View module for handling requests about vendors"""
 from django.core.exceptions import ValidationError
-from django.db.models import Avg
+from django.db.models import Avg, Q
 from rest_framework import serializers, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -37,8 +37,6 @@ class VendorView(ViewSet):
 
         host = Host.objects.get(user=request.auth.user)
         type_id = request.query_params.get('type', None)
-        max_price = request.query_params.get('max_price', None)
-        min_price = request.query_params.get('min_price', None)
         rating = request.query_params.get('rating', None)
 
         vendors = Vendor.objects.filter(
@@ -50,14 +48,6 @@ class VendorView(ViewSet):
 
         if type_id is not None:
             vendors = vendors.filter(vendor_type_id=type_id)
-        if max_price is not None:
-            vendors = vendors.annotate(
-                cost_average=Avg("contracts__cost_per_hour")
-            ).filter(cost_average__lte=max_price)
-        if min_price is not None:
-            vendors = vendors.annotate(
-                cost_average=Avg("contracts__cost_per_hour")
-            ).filter(cost_average__gte=min_price)
         if rating is not None:
             vendors = vendors.annotate(
                 rating_average=Avg("vendor_rating__score")
@@ -104,7 +94,7 @@ class SimpleVendorSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Vendor
-        depth = 1
+        depth = 2
         fields = ("id", "user", "vendor_type", "business_name", "city", "state",
                   "zip_code", "description", "profile_image", "years_in_business",
                   "average_rating", "average_cost", "total_hired_count")
