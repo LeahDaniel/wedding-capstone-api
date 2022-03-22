@@ -7,7 +7,6 @@ from rest_framework import serializers, status
 from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
 from weddingapi.models import Host, VisionPhoto
-from weddingapi.views.host import HostSerializer
 
 
 class VisionPhotoView(ViewSet):
@@ -22,7 +21,7 @@ class VisionPhotoView(ViewSet):
         
         host_id = request.query_params.get('host', None)
 
-        vision_photos = VisionPhoto.objects.filter(host__id=host_id)
+        vision_photos = VisionPhoto.objects.filter(host__id=host_id).order_by("time_added")
         serializer = VisionPhotoSerializer(vision_photos, many=True)
         return Response(serializer.data)
 
@@ -60,7 +59,6 @@ class VisionPhotoView(ViewSet):
 
 
 class VisionPhotoSerializer(serializers.ModelSerializer):
-    host = HostSerializer(many=False)
 
     class Meta:
         model = VisionPhoto
