@@ -1,0 +1,56 @@
+[
+    {
+        "model": "weddingapi.visionphoto",
+        "pk": 1,
+        "fields": {
+            "file": "visionphotos/7uRYbjouOnQ.jpg",
+            "time_added": "2022-01-01",
+            "host_id": 1
+        }
+    },
+    {
+        "model": "weddingapi.visionphoto",
+        "pk": 2,
+        "fields": {
+            "file": "visionphotos/7wP3Fa-C_TQ.jpg",
+            "time_added": "2022-01-01",
+            "host_id": 1
+        }
+    },
+    {
+        "model": "weddingapi.visionphoto",
+        "pk": 3,
+        "fields": {
+            "file": "visionphotos/35Q-6Dw_RNA.jpg",
+            "time_added": "2022-01-01",
+            "host_id": 1
+        }
+    },
+    {
+        "model": "weddingapi.visionphoto",
+        "pk": 4,
+        "fields": {
+            "file": "visionphotos/bom8MViG88Q.jpg",
+            "time_added": "2022-01-01",
+            "host_id": 1
+        }
+    },
+    {
+        "model": "weddingapi.visionphoto",
+        "pk": 5,
+        "fields": {
+            "file": "visionphotos/DIHT3ieH8W0.jpg",
+            "time_added": "2022-01-01",
+            "host_id": 1
+        }
+    },
+    {
+        "model": "weddingapi.visionphoto",
+        "pk": 6,
+        "fields": {
+            "file": "visionphotos/dBdLKsleIQ0.jpg",
+            "time_added": "2022-01-01",
+            "host_id": 1
+        }
+    }
+]
