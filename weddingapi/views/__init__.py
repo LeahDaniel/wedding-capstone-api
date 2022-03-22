@@ -6,3 +6,4 @@ from .message import MessageView
 from .rating import RatingView
 from .review import ReviewView
 from .host_vendor import HostVendorView
+from .palette import PaletteView

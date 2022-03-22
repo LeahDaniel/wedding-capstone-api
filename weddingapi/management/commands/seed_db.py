@@ -4,12 +4,12 @@ import faker_commerce
 from django.contrib.auth.models import User
 from django.core.management.base import BaseCommand
 from faker import Faker
-from faker.providers import address, date_time
+from faker.providers import address, date_time, color
 from rest_framework.authtoken.models import Token
 from weddingapi.helpers import CITIES
 # from weddingapi.helpers import STATES
 from weddingapi.models import (Host, Rating, Review, Vendor, VendorType,
-                               VendorWeddingSize, WeddingSize)
+                               VendorWeddingSize, WeddingSize, Palette)
 from weddingapi.models.host_vendor import HostVendor
 from weddingapi.models.message import Message
 
@@ -21,6 +21,7 @@ class Command(BaseCommand):
     faker.add_provider(faker_commerce.Provider)
     faker.add_provider(date_time)
     faker.add_provider(address)
+    faker.add_provider(color)
 
     def add_arguments(self, parser):
         # Positional arguments
@@ -109,6 +110,7 @@ class Command(BaseCommand):
             self.create_reviews(host, vendors)
             self.create_contracts(host, vendors)
             self.create_messages_from_host(host, vendors)
+            self.create_palette(host)
 
         for vendor in vendors:
             self.create_vendor_wedding_sizes(vendor)
@@ -211,3 +213,15 @@ class Command(BaseCommand):
                         body=self.faker.paragraph(),
                         time_sent=self.faker.date_time()
                     )
+                    
+    def create_palette(self, host):
+        """_summary_
+
+        """
+        
+        Palette.objects.create(
+            host=host,
+            color1 = self.faker.hex_color(),
+            color2 = self.faker.hex_color(),
+            color3 = self.faker.hex_color(),
+        )

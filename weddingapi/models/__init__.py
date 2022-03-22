@@ -7,3 +7,4 @@ from .vendor import Vendor
 from .vendor_type import VendorType
 from .vendor_wedding_size import VendorWeddingSize
 from .wedding_size import WeddingSize
+from .palette import Palette

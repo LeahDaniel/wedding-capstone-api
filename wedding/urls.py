@@ -20,7 +20,7 @@ from django.contrib import admin
 from django.urls import path
 from rest_framework import routers
 from weddingapi.views import (HostVendorView, HostView, MessageView,
-                              RatingView, ReviewView, VendorView,
+                              PaletteView, RatingView, ReviewView, VendorView,
                               get_vendor_types, get_wedding_sizes, login_user,
                               register_host, register_vendor)
 
@@ -30,6 +30,7 @@ router.register(r'vendors', VendorView, 'vendor')
 router.register(r'messages', MessageView, 'message')
 router.register(r'ratings', RatingView, 'rating')
 router.register(r'reviews', ReviewView, 'review')
+router.register(r'palettes', PaletteView, 'palette')
 router.register(r'hostvendors', HostVendorView, 'host vendor')
 
 
