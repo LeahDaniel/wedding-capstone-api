@@ -1,0 +1,56 @@
+[
+    {
+        "model": "weddingapi.exampleimage",
+        "pk": 1,
+        "fields": {
+            "file": "exampleimages/7uRYbjouOnQ.jpg",
+            "time_added": "2022-01-01",
+            "vendor_id": 1
+        }
+    },
+    {
+        "model": "weddingapi.exampleimage",
+        "pk": 2,
+        "fields": {
+            "file": "exampleimages/7wP3Fa-C_TQ.jpg",
+            "time_added": "2022-01-01",
+            "vendor_id": 1
+        }
+    },
+    {
+        "model": "weddingapi.exampleimage",
+        "pk": 3,
+        "fields": {
+            "file": "exampleimages/35Q-6Dw_RNA.jpg",
+            "time_added": "2022-01-01",
+            "vendor_id": 1
+        }
+    },
+    {
+        "model": "weddingapi.exampleimage",
+        "pk": 4,
+        "fields": {
+            "file": "exampleimages/bom8MViG88Q.jpg",
+            "time_added": "2022-01-01",
+            "vendor_id": 1
+        }
+    },
+    {
+        "model": "weddingapi.exampleimage",
+        "pk": 5,
+        "fields": {
+            "file": "exampleimages/DIHT3ieH8W0.jpg",
+            "time_added": "2022-01-01",
+            "vendor_id": 1
+        }
+    },
+    {
+        "model": "weddingapi.exampleimage",
+        "pk": 6,
+        "fields": {
+            "file": "exampleimages/dBdLKsleIQ0.jpg",
+            "time_added": "2022-01-01",
+            "vendor_id": 1
+        }
+    }
+]
