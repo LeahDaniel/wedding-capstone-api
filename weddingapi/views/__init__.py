@@ -8,3 +8,4 @@ from .review import ReviewView
 from .host_vendor import HostVendorView
 from .palette import PaletteView
 from .vision_photo import VisionPhotoView
+from .example_image import ExampleImageView
