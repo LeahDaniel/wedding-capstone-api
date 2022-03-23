@@ -30,6 +30,6 @@ SELECT m.id, m.body, m.vendor_id, m.sender_id, m.host_id,
             WHERE m.vendor_id IS 2
             GROUP BY host_id
 
-SELECT * FROM weddingapi_vendor WHERE business_name IS "Used Hat"
+SELECT * FROM weddingapi_vendor WHERE business_name IS "Gorgeous Cotton Chair"
 SELECT * FROM authtoken_token WHERE user_id IS 182
 SELECT * FROM auth_user WHERE id IS 182

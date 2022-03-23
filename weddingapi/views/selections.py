@@ -18,7 +18,7 @@ class VendorTypeSerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = VendorType
-        fields = ['id', 'label']
+        fields = ['id', 'label', 'image']
 
 
 @api_view(['GET'])

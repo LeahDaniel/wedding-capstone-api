@@ -3,42 +3,72 @@
         "model": "weddingapi.vendortype",
         "pk": 1,
         "fields": {
-            "label": "Photographer"
+            "label": "Photographer",
+            "image": "vendortypes/photographer.jpeg"
         }
     },
     {
         "model": "weddingapi.vendortype",
         "pk": 2,
         "fields": {
-            "label": "Hair Stylist"
+            "label": "Beautician",
+            "image": "vendortypes/beauty.jpg"
         }
     },
     {
         "model": "weddingapi.vendortype",
         "pk": 3,
         "fields": {
-            "label": "Makeup Artist"
+            "label": "Jeweler",
+            "image": "vendortypes/jeweler.jpeg"
         }
     },
     {
         "model": "weddingapi.vendortype",
         "pk": 4,
         "fields": {
-            "label": "Florist"
+            "label": "Florist",
+            "image": "vendortypes/florist.jpg"
         }
     },
     {
         "model": "weddingapi.vendortype",
         "pk": 5,
         "fields": {
-            "label": "Musician"
+            "label": "Band",
+            "image": "vendortypes/band.jpeg"
         }
     },
     {
         "model": "weddingapi.vendortype",
         "pk": 6,
         "fields": {
-            "label": "Caterer"
+            "label": "DJ",
+            "image": "vendortypes/dj.jpeg"
+        }
+    },
+    {
+        "model": "weddingapi.vendortype",
+        "pk": 7,
+        "fields": {
+            "label": "Caterer",
+            "image": "vendortypes/caterer.jpeg"
+        }
+    },
+    {
+        "model": "weddingapi.vendortype",
+        "pk": 8,
+        "fields": {
+            "label": "Bar Services",
+            "image": "vendortypes/bartender.jpg"
+        }
+    },
+    {
+        "model": "weddingapi.vendortype",
+        "pk": 9,
+        "fields": {
+            "label": "Bridal Salons",
+            "image": "vendortypes/salon.jpeg"
         }
     }
 ]

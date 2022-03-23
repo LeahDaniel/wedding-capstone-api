@@ -2,6 +2,8 @@ from django.contrib.auth.models import User
 from django.db import models
 from datetime import date
 
+from weddingapi.models.host_vendor import HostVendor
+
 
 class Host(models.Model):
     user = models.OneToOneField(
@@ -27,3 +29,21 @@ class Host(models.Model):
             return True
         else:
             return False
+        
+    @property
+    def total_costs(self):
+        """ sum of all costs per hour for associated hostVendors """
+        
+        total_cost = 0
+        
+        host_vendors =  HostVendor.objects.filter(
+                host=self,
+                hired=True,
+                fired=False
+            )
+        
+        for host_vendor in host_vendors:
+            total_cost += host_vendor.cost_per_hour
+            
+        return total_cost
+        
